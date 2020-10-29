@@ -3,7 +3,6 @@ import { Switch, Route } from "react-router-dom";
 import Landing from "./pages/Landing";
 import Signup from "./pages/Signup";
 import Signin from "./pages/Signin";
-import About from "./pages/About";
 import AccountActivation from "./pages/AccountActivation";
 import ForgetPassword from "./pages/ForgetPassword";
 import ResetPassword from "./pages/ResetPassword";
@@ -22,14 +21,13 @@ const Routes = () => {
                 <Route exact path="/" component={Landing} />
                 <Route exact path="/signup" component={Signup} />
                 <Route exact path="/signin" component={Signin} />
-                <Route exact path="/about" component={About} />
                 <Route
                     exact
                     path="/auth/activate/:token"
                     // path="/auth/activate"
                     component={AccountActivation}
                 />
-                {/* Route when user click on forget password */}
+                {/* Route when user click on forget password or change password */}
                 <Route
                     exact
                     path="/forget-password"

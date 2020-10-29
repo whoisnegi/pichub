@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { Fragment, useState } from "react";
 import {
     Button,
     Dialog,
@@ -17,7 +17,7 @@ import AddIcon from "@material-ui/icons/Add";
 import cx from "classnames";
 import { createPost } from "../redux/actions/profileActions";
 
-const useStyles = makeStyles((theme) => ({
+const useStyles = makeStyles(() => ({
     root: {
         "& .MuiSvgIcon-root": {
             marginTop: "5px",
@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-function FormDialog({ isAuth, uploadPost, setShowProgress }) {
+function FormDialog({ uploadPost, setShowProgress, setError }) {
     const classes = useStyles();
 
     const [open, setOpen] = React.useState(false);
@@ -50,7 +50,7 @@ function FormDialog({ isAuth, uploadPost, setShowProgress }) {
 
     const [previewFile, setPreviewFile] = useState(null);
     const [file, setFile] = useState(null);
-    const [error, setError] = useState("");
+    // const [error, setError] = useState("");
     const [caption, setCaption] = useState("");
 
     const handleCaptionChange = (e) => {
@@ -66,14 +66,12 @@ function FormDialog({ isAuth, uploadPost, setShowProgress }) {
             setError("");
             setOpen(true);
         } else {
-            setError("Please select an image file (png/jpeg)");
+            setError("Please select an image file (png/jpeg/jpg)");
             setFile(null);
-            console.log(error);
         }
     };
 
     const handlePost = (e) => {
-        // console.log(file, caption);
         handleClose();
         const bodyFormData = new FormData();
         bodyFormData.append("caption", caption);
@@ -83,35 +81,33 @@ function FormDialog({ isAuth, uploadPost, setShowProgress }) {
     };
 
     return (
-        <div>
-            <div>
-                <input
-                    onChange={handleChange}
-                    accept="image/*"
-                    className={classes.input}
-                    id="icon-button-file"
-                    type="file"
-                />
-                <Tooltip
-                    className={classes.root}
-                    TransitionComponent={Fade}
-                    TransitionProps={{ timeout: 600 }}
-                    title="Upload a photo"
-                    aria-label="add"
-                >
-                    <Fab className={cx(classes.absolute)}>
-                        <label htmlFor="icon-button-file">
-                            <AddIcon />
-                        </label>
-                    </Fab>
-                </Tooltip>
-            </div>
+        <Fragment>
+            <input
+                onChange={handleChange}
+                // accept="image/*"
+                className={classes.input}
+                id="icon-button-file"
+                type="file"
+            />
+            <Tooltip
+                className={classes.root}
+                TransitionComponent={Fade}
+                TransitionProps={{ timeout: 600 }}
+                title="Upload a photo"
+                aria-label="add"
+            >
+                <Fab className={cx(classes.absolute)}>
+                    <label htmlFor="icon-button-file">
+                        <AddIcon />
+                    </label>
+                </Fab>
+            </Tooltip>
             <Dialog
                 open={open}
                 onClose={handleClose}
                 aria-labelledby="form-dialog-title"
             >
-                <DialogTitle id="form-dialog-title">Subscribe</DialogTitle>
+                <DialogTitle id="form-dialog-title">New Post</DialogTitle>
                 <DialogContent>
                     <DialogContentText>
                         <TextField
@@ -120,22 +116,14 @@ function FormDialog({ isAuth, uploadPost, setShowProgress }) {
                             multiline
                             rows={4}
                             variant="outlined"
-                            placeholder="what's new with you ?"
-                            // style={{
-                            //     display: block
-                            // }}
+                            placeholder="Give a Caption Here"
                             fullwidth={true}
                             onChange={handleCaptionChange}
                         />
                     </DialogContentText>
 
                     {previewFile && (
-                        <img
-                            src={previewFile}
-                            alt="uploaded"
-                            width={550}
-                            // height="40%"
-                        ></img>
+                        <img src={previewFile} alt="uploaded" width={550}></img>
                     )}
                 </DialogContent>
                 <DialogActions>
@@ -147,7 +135,7 @@ function FormDialog({ isAuth, uploadPost, setShowProgress }) {
                     </Button>
                 </DialogActions>
             </Dialog>
-        </div>
+        </Fragment>
     );
 }
 

@@ -1,4 +1,4 @@
-import React, { Fragment, useState, useEffect } from "react";
+import React, { useState } from "react";
 import { Avatar, Typography, Paper, Grid, Button } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { Link, useHistory } from "react-router-dom";
@@ -8,6 +8,7 @@ import httpRequest from "../config/axiosConfig";
 import {
     updateUserAction,
     updateAvatarAction,
+    removeAvatarAction,
 } from "../redux/actions/profileActions";
 import { toast } from "react-toastify";
 import Loader from "../components/Loader";
@@ -38,6 +39,7 @@ const useStyles = makeStyles((theme) => ({
     label: {
         color: "#efb6b2",
         fontWeight: "700",
+        textDecoration: "none",
         "&:hover": {
             cursor: "pointer",
             fontWeight: "500",
@@ -77,7 +79,12 @@ const validateForm = (errors) => {
     return valid;
 };
 
-const EditProfileForm = ({ user, updateUserProfile, updateAvatar }) => {
+const EditProfileForm = ({
+    user,
+    updateUserProfile,
+    updateAvatar,
+    removeAvatar,
+}) => {
     const classes = useStyles();
     const history = useHistory();
 
@@ -86,7 +93,7 @@ const EditProfileForm = ({ user, updateUserProfile, updateAvatar }) => {
     const [error, setError] = useState("");
 
     const handleFileChange = async (e) => {
-        setOpen(true)
+        setOpen(true);
         let file = e.target.files[0];
         const types = ["image/png", "image/jpeg", "image/jpg"];
         if (file && types.includes(file.type)) {
@@ -95,11 +102,20 @@ const EditProfileForm = ({ user, updateUserProfile, updateAvatar }) => {
             const bodyFormData = new FormData();
             bodyFormData.append("avatar", file);
             await updateAvatar(bodyFormData);
-            setOpen(false)
+            setOpen(false);
         } else {
             setError("Please select an image file (png/jpeg)");
             setFile(null);
-            console.log(error);
+        }
+    };
+
+    const handleRemoveProfilePhoto = async (e) => {
+        if (user.avatar === undefined || user.avatar.length === 0) {
+            toast.error("No profile pic found !");
+        } else {
+            setOpen(true);
+            await removeAvatar();
+            setOpen(false);
         }
     };
 
@@ -117,7 +133,7 @@ const EditProfileForm = ({ user, updateUserProfile, updateAvatar }) => {
         age: "",
     });
 
-    const { username, name, email, age, bio } = values;
+    const { username, name, age, bio } = values;
 
     const handleChange = (name) => async (e) => {
         let value = e.target.value;
@@ -162,72 +178,76 @@ const EditProfileForm = ({ user, updateUserProfile, updateAvatar }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         if (validateForm(errors)) {
-            console.log("Valid form");
             let data = values;
             for (let i in data) {
                 if (data[i] === "") {
                     delete data[i];
                 }
             }
-            console.log(data);
             await updateUserProfile(data);
             toast.success("Profile Updated");
             setTimeout(() => {
                 history.goBack();
             }, 1000);
         } else {
-            console.log("Invalid form");
             toast.error("Please provide valid inputs");
         }
     };
 
-    return (
-        user ? (
-            <Paper className={classes.placement} elevation={3}>
-                <Grid container className={classes.pb}>
-                    <Grid item xs={1}>
-                        {open ? (
-                            <Loader color="secondary"/>
-                        ) : (
-                            <Avatar
-                                alt={user.name}
-                                src={
-                                    user.avatar
-                                        ? user.avatar.imageUrl
-                                        : "https://flyinryanhawks.org/wp-content/uploads/2016/08/profile-placeholder.png"
-                                }
-                                className={classes.large}
-                            />
-                        )}
-                    </Grid>
-
-                    <Grid item xs={6} className={classes.ml}>
-                        <Typography variant="h6" className={classes.username}>
-                            {user.username}
-                        </Typography>
-                        <input
-                            onChange={handleFileChange}
-                            accept="image/*"
-                            className={classes.input}
-                            id="input-button-file"
-                            type="file"
+    return user ? (
+        <Paper className={classes.placement} elevation={3}>
+            <Grid container className={classes.pb}>
+                <Grid item xs={1}>
+                    {open ? (
+                        <Loader color="secondary" />
+                    ) : (
+                        <Avatar
+                            alt={user.name}
+                            src={
+                                user.avatar
+                                    ? user.avatar.imageUrl
+                                    : "https://flyinryanhawks.org/wp-content/uploads/2016/08/profile-placeholder.png"
+                            }
+                            className={classes.large}
                         />
-                        <label htmlFor="input-button-file">
-                            <Typography
-                                variant="overline"
-                                display="inline"
-                                className={classes.label}
-                            >
-                                Change Profile Photo
-                            </Typography>
-                        </label>
-                        <Link
-                            className="link"
-                            style={{ marginLeft: "20px" }}
-                            to="/forget-password"
-                            className="underline"
+                    )}
+                </Grid>
+
+                <Grid item xs={6} className={classes.ml}>
+                    <Typography variant="h6" className={classes.username}>
+                        {user.username}
+                    </Typography>
+                    <input
+                        onChange={handleFileChange}
+                        accept="image/*"
+                        className={classes.input}
+                        id="input-button-file"
+                        type="file"
+                    />
+                    <label htmlFor="input-button-file">
+                        <Typography
+                            variant="overline"
+                            display="inline"
                             className={classes.label}
                         >
+                            Change Profile Photo
+                        </Typography>
+                    </label>
+
+                    <Typography
+                        variant="overline"
+                        display="inline"
+                        className={classes.label}
+                        style={{
+                            marginLeft: "10px",
+                        }}
+                        onClick={handleRemoveProfilePhoto}
+                    >
+                        Remove Profile Photo
+                    </Typography>
+
+                    <div>
+                        <Link to="/forget-password" className={classes.label}>
                             <Typography
                                 variant="overline"
                                 display="inline"
@@ -236,117 +256,105 @@ const EditProfileForm = ({ user, updateUserProfile, updateAvatar }) => {
                                 Change Password
                             </Typography>
                         </Link>
-                    </Grid>
-                    <Grid item xs={1}></Grid>
+                    </div>
                 </Grid>
+                <Grid item xs={1}></Grid>
+            </Grid>
 
-                <Grid container className={classes.pb}>
-                    <Grid item xs={1}>
-                        <Typography
-                            variant="button"
-                            className={classes.textStyles}
-                        >
-                            Username
-                        </Typography>
-                    </Grid>
-                    <Grid item xs={6} className={classes.ml}>
-                        <MuiInput
-                            label="Username"
-                            name="username"
-                            type="text"
-                            value={username}
-                            onChange={handleChange("username")}
-                            error={errors.username}
-                        />
-                    </Grid>
-                    <Grid item xs={1}></Grid>
+            <Grid container className={classes.pb}>
+                <Grid item xs={1}>
+                    <Typography variant="button" className={classes.textStyles}>
+                        Username
+                    </Typography>
                 </Grid>
+                <Grid item xs={6} className={classes.ml}>
+                    <MuiInput
+                        label="Username"
+                        name="username"
+                        type="text"
+                        value={username}
+                        onChange={handleChange("username")}
+                        error={errors.username}
+                    />
+                </Grid>
+                <Grid item xs={1}></Grid>
+            </Grid>
 
-                <Grid container className={classes.pb}>
-                    <Grid item xs={1}>
-                        <Typography
-                            variant="button"
-                            className={classes.textStyles}
-                        >
-                            Name
-                        </Typography>
-                    </Grid>
-                    <Grid item xs={6} className={classes.ml}>
-                        <MuiInput
-                            label="Name"
-                            name="name"
-                            type="text"
-                            value={name}
-                            onChange={handleChange("name")}
-                            error={errors.name}
-                        />
-                    </Grid>
-                    <Grid item xs={1}></Grid>
+            <Grid container className={classes.pb}>
+                <Grid item xs={1}>
+                    <Typography variant="button" className={classes.textStyles}>
+                        Name
+                    </Typography>
                 </Grid>
+                <Grid item xs={6} className={classes.ml}>
+                    <MuiInput
+                        label="Name"
+                        name="name"
+                        type="text"
+                        value={name}
+                        onChange={handleChange("name")}
+                        error={errors.name}
+                    />
+                </Grid>
+                <Grid item xs={1}></Grid>
+            </Grid>
 
-                <Grid container className={classes.pb}>
-                    <Grid item xs={1}>
-                        <Typography
-                            variant="button"
-                            className={classes.textStyles}
-                        >
-                            Age
-                        </Typography>
-                    </Grid>
-                    <Grid item xs={6} className={classes.ml}>
-                        <MuiInput
-                            label="Age"
-                            name="age"
-                            type="text"
-                            value={age}
-                            onChange={handleChange("age")}
-                            error={errors.age}
-                        />
-                    </Grid>
-                    <Grid item xs={1}></Grid>
+            <Grid container className={classes.pb}>
+                <Grid item xs={1}>
+                    <Typography variant="button" className={classes.textStyles}>
+                        Age
+                    </Typography>
                 </Grid>
+                <Grid item xs={6} className={classes.ml}>
+                    <MuiInput
+                        label="Age"
+                        name="age"
+                        type="text"
+                        value={age}
+                        onChange={handleChange("age")}
+                        error={errors.age}
+                    />
+                </Grid>
+                <Grid item xs={1}></Grid>
+            </Grid>
 
-                <Grid container className={classes.pb}>
-                    <Grid item xs={1}>
-                        <Typography
-                            variant="button"
-                            className={classes.textStyles}
-                        >
-                            Bio
-                        </Typography>
-                    </Grid>
-                    <Grid item xs={6} className={classes.ml}>
-                        <MuiInput
-                            label="Bio"
-                            name="bio"
-                            type="text"
-                            multiline={true}
-                            rows={3}
-                            value={bio}
-                            onChange={handleChange("bio")}
-                            error={errors.bio}
-                        />
-                    </Grid>
-                    <Grid item xs={1}></Grid>
+            <Grid container className={classes.pb}>
+                <Grid item xs={1}>
+                    <Typography variant="button" className={classes.textStyles}>
+                        Bio
+                    </Typography>
                 </Grid>
+                <Grid item xs={6} className={classes.ml}>
+                    <MuiInput
+                        label="Bio"
+                        name="bio"
+                        type="text"
+                        multiline={true}
+                        rows={3}
+                        value={bio}
+                        onChange={handleChange("bio")}
+                        error={errors.bio}
+                    />
+                </Grid>
+                <Grid item xs={1}></Grid>
+            </Grid>
 
-                <Grid container className={classes.pb}>
-                    <Grid item xs={1}></Grid>
-                    <Grid
-                        item
-                        xs={6}
-                        className={classes.ml}
-                        style={{ textAlign: "right" }}
-                    >
-                        <Button variant="outlined" onClick={handleSubmit}>
-                            Update Profile
-                        </Button>
-                    </Grid>
+            <Grid container className={classes.pb}>
+                <Grid item xs={1}></Grid>
+                <Grid
+                    item
+                    xs={6}
+                    className={classes.ml}
+                    style={{ textAlign: "right" }}
+                >
+                    <Button variant="outlined" onClick={handleSubmit}>
+                        Update Profile
+                    </Button>
                 </Grid>
-            </Paper>
-        ) : (
-            <Progress />
-        )
+            </Grid>
+        </Paper>
+    ) : (
+        <Progress />
     );
 };
 
@@ -360,6 +368,7 @@ const mapDispatchToprops = (dispatch) => {
     return {
         updateUserProfile: (data) => dispatch(updateUserAction(data)),
         updateAvatar: (formData) => dispatch(updateAvatarAction(formData)),
+        removeAvatar: () => dispatch(removeAvatarAction()),
     };
 };
 

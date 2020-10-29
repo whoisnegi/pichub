@@ -21,10 +21,6 @@ const UserBio = ({
         nameBioStyles,
     } = classes;
 
-    if (user) {
-        const id = user._id;
-    }
-
     return (
         user &&
         (loggedInUser._id === userId ? (
@@ -49,7 +45,6 @@ const UserBio = ({
 
                         {/* Follow/Unfollow Button  */}
 
-                        {console.log(loggedInUser.following, user._id)}
                         {loggedInUser.following.some(
                             (follow) => follow.userId.toString() === user._id
                         ) ? (

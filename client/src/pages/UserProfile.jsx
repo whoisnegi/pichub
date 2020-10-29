@@ -1,17 +1,12 @@
-import React, { useEffect, lazy, Suspense, useState } from "react";
-import { Grid, LinearProgress } from "@material-ui/core";
+import React, { useEffect, useState } from "react";
+import { Grid, LinearProgress, Typography } from "@material-ui/core";
 import { makeStyles } from "@material-ui/core/styles";
 import { connect } from "react-redux";
-
 import UploadDialog from "../components/UploadDialog";
 import { setProfile } from "../redux/actions/profileActions";
 import UserBio from "../components/UserBio";
-import LoaderImage from "../images/placeholder.gif";
 import ProfileTab from "../components/ProfileTab";
 import Progress from "../components/Progress";
-
-const Card2 = lazy(() => import("../components/Card2"));
-
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -26,14 +21,14 @@ const useStyles = makeStyles((theme) => ({
         marginRight: "8%",
     },
     usernameStyles: {
-        fontFamily: 'Montserrat',
+        fontFamily: "Montserrat",
         fontWeight: "300",
         fontSize: "1.8rem",
         margin: "0.9rem 0 1.5rem 0",
     },
     nameBioStyles: {
         fontSize: "15px",
-        fontWeight: "500"
+        fontWeight: "500",
     },
     lowFontWeightStyles: {
         fontWeight: 200,
@@ -52,11 +47,16 @@ const useStyles = makeStyles((theme) => ({
         marginTop: "20px",
         textAlign: "center",
     },
+    errorStyle: {
+        margin: "auto",
+        marginTop: "10px",
+    },
 }));
 
 function UserProfile({ isAuth, setProfileData, profile }) {
     const classes = useStyles();
     const [showProgress, setShowProgress] = useState(false);
+    const [error, setError] = useState("");
 
     const { gridImg, photoUploadStyle } = classes;
 
@@ -64,44 +64,58 @@ function UserProfile({ isAuth, setProfileData, profile }) {
         setProfileData();
     }, [setProfileData]);
 
-    return (
-        profile.posts ? (
-            <Grid container className="mt">
-                <Grid item md={2}></Grid>
-                <Grid container item md={8} xs={12} direction="column">
-                    {/* Users Bio */}
-                    <UserBio
-                        user={profile.user}
-                        classes={classes}
-                        postCount={profile.posts.length}
-                        showFollowButton={false}
+    return profile.posts ? (
+        <Grid container className="mt">
+            <Grid item md={2}></Grid>
+            <Grid container item md={8} xs={12} direction="column">
+                {/* Users Bio */}
+                <UserBio
+                    user={profile.user}
+                    classes={classes}
+                    postCount={profile.posts.length}
+                    showFollowButton={false}
+                />
+
+                {/* Photo upload Modal*/}
+                <Grid item xs={12} className={photoUploadStyle}>
+                    <UploadDialog
+                        setShowProgress={setShowProgress}
+                        setError={setError}
                     />
-
-                    {/* Photo upload Modal*/}
-                    <Grid item xs={12} className={photoUploadStyle}>
-                        <UploadDialog setShowProgress={setShowProgress} />
-                    </Grid>
-
-                    {/* Uploading Loader */}
-                    {showProgress && (
-                        <div
-                            className={classes.root}
-                            style={{
-                                marginTop: "20px",
-                                textAlign: "center",
-                            }}
-                        >
-                            <LinearProgress color="secondary" />
-                        </div>
-                    )}
-
-                    <ProfileTab posts={profile.posts} gridImg={gridImg} />
                 </Grid>
-                <Grid item xs={2}></Grid>
+                {error && (
+                    <Typography
+                        variant="caption"
+                        color="error"
+                        className={classes.errorStyle}
+                    >
+                        {error}
+                    </Typography>
+                )}
+
+                {/* Uploading Loader */}
+                {showProgress && (
+                    <div
+                        className={classes.root}
+                        style={{
+                            marginTop: "20px",
+                            textAlign: "center",
+                        }}
+                    >
+                        <LinearProgress color="secondary" />
+                    </div>
+                )}
+
+                <ProfileTab
+                    posts={profile.posts}
+                    gridImg={gridImg}
+                    user={profile.user}
+                />
             </Grid>
-        ) : (
-            <Progress />
-        )
+            <Grid item xs={2}></Grid>
+        </Grid>
+    ) : (
+        <Progress />
     );
 }
 

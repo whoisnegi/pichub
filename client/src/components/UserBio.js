@@ -24,7 +24,7 @@ function UserBio({ user, classes, postCount }) {
                         alt="profile pic"
                         width="180px"
                         style={{ borderRadius: 100 }}
-                    ></img>
+                    />
                 </Grid>
                 <Grid item xs={8}>
                     <Typography variant="h4" className={usernameStyles}>
@@ -33,7 +33,7 @@ function UserBio({ user, classes, postCount }) {
                             <Button
                                 variant="outlined"
                                 style={{
-                                    marginLeft: "40px",
+                                    marginLeft: "20px",
                                 }}
                             >
                                 EDIT PROFILE
@@ -52,11 +52,8 @@ function UserBio({ user, classes, postCount }) {
                         {user.following.length ? user.following.length : 0}{" "}
                         <span className={lowFontWeightStyles}>following</span>
                     </Typography>
-                    <div style={{marginTop: "1.5rem"}}>
-                        <Typography
-                            variant="button"
-                            className={nameBioStyles}
-                        >
+                    <div style={{ marginTop: "1.5rem" }}>
+                        <Typography variant="button" className={nameBioStyles}>
                             {user.name}
                         </Typography>
                     </div>

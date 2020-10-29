@@ -9,7 +9,7 @@ import LoaderImage from "../images/placeholder.gif";
 import PublicProfileBio from "../components/PublicProfileBio";
 import Progress from "../components/Progress";
 
-const Card2 = lazy(() => import("../components/Card2"));
+const ProfileCard = lazy(() => import("../components/ProfileCard"));
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -24,14 +24,14 @@ const useStyles = makeStyles((theme) => ({
         marginRight: "8%",
     },
     usernameStyles: {
-        fontFamily: 'Montserrat',
+        fontFamily: "Montserrat",
         fontWeight: "300",
         fontSize: "1.8rem",
         margin: "0.9rem 0 1.5rem 0",
     },
     nameBioStyles: {
         fontSize: "15px",
-        fontWeight: "500"
+        fontWeight: "500",
     },
     lowFontWeightStyles: {
         fontWeight: 200,
@@ -62,7 +62,7 @@ function UserProfile({ setProfile, publicProfile }) {
     }, [setProfile, userId]);
 
     return publicProfile ? (
-        <Grid container style={{ marginTop: "20px"}}>
+        <Grid container style={{ marginTop: "20px" }}>
             <Grid item md={2}></Grid>
             <Grid container item md={8} xs={12} direction="column">
                 {/* Users Bio */}
@@ -74,7 +74,7 @@ function UserProfile({ setProfile, publicProfile }) {
                 />
 
                 {/* User Posts */}
-                <Grid container item xs={12} className={gridImg}  >
+                <Grid container item xs={12} className={gridImg}>
                     {publicProfile.posts &&
                         publicProfile.posts.map((post) => (
                             <Grid item xs={4} key={post._id}>
@@ -87,7 +87,10 @@ function UserProfile({ setProfile, publicProfile }) {
                                         />
                                     }
                                 >
-                                    <Card2 post={post} />
+                                    <ProfileCard
+                                        post={post}
+                                        user={publicProfile.user}
+                                    />
                                 </Suspense>
                             </Grid>
                         ))}

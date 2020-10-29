@@ -10,7 +10,6 @@ const Dashboard = ({ posts, setPosts, isAuth }) => {
         setPosts();
     }, [setPosts]);
 
-    console.log(posts)
     const render = posts ? (
         <Fragment>
             <Grid container direction="row">

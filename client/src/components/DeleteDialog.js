@@ -1,8 +1,4 @@
-import React, {
-  forwardRef,
-  Fragment,
-  useState,
-} from "react";
+import React, { forwardRef, Fragment } from "react";
 import {
   Button,
   Dialog,
@@ -10,6 +6,8 @@ import {
   DialogTitle,
   Slide,
 } from "@material-ui/core";
+import { connect } from "react-redux";
+import { deletePost } from "../redux/actions/profileActions";
 
 const Transition = forwardRef(function Transition(
   props,
@@ -18,10 +16,19 @@ const Transition = forwardRef(function Transition(
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-export default function AlertDialogSlide({ open, setDialogOpen }) {
-
-  const handleClose = ({ open }) => {
+const AlertDialogSlide = ({
+  open,
+  setDialogOpen,
+  postId,
+  setDeletePost,
+}) => {
+  const handleClose = () => {
     setDialogOpen(false);
+  };
+
+  const handleClick = async () => {
+    await setDeletePost(postId);
+    handleClose();
   };
 
   return (
@@ -40,15 +47,18 @@ export default function AlertDialogSlide({ open, setDialogOpen }) {
 
         <DialogActions>
           <Button
+            style={{ marginRight: "20px" }}
             variant="outlined"
             onClick={handleClose}
             color="secondary"
           >
             Just Kidding.
           </Button>
+
           <Button
             variant="outlined"
-            onClick={handleClose}
+            onClick={handleClick}
+            // onClick={handleClose}
             color="secondary"
           >
             Yes, Delete My Post.
@@ -57,4 +67,15 @@ export default function AlertDialogSlide({ open, setDialogOpen }) {
       </Dialog>
     </Fragment>
   );
-}
+};
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setDeletePost: (postId) => dispatch(deletePost(postId)),
+  };
+};
+
+export default connect(
+  null,
+  mapDispatchToProps
+)(AlertDialogSlide);

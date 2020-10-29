@@ -4,7 +4,6 @@ import { toast } from "react-toastify";
 import { Link, Redirect } from "react-router-dom";
 import { Visibility, VisibilityOff } from "@material-ui/icons";
 import { connect } from "react-redux";
-import LoginImage from "../images/login.png";
 import { setUserLogin } from "../redux/actions/authActions";
 import {
     Button,
@@ -34,18 +33,18 @@ const useStyles = makeStyles((theme) => ({
     },
     loader: {
         marginLeft: "7.5rem",
-        marginBottom: "1.5rem"
-    }
+        marginBottom: "1.5rem",
+    },
 }));
 
-const Signin = ({ setUser, error, user, removeLoginError, isAuth }) => {
+const Signin = ({ setUser, error, removeLoginError, isAuth }) => {
     const classes = useStyles();
 
     const [open, setOpen] = useState(false);
 
     const [values, setValues] = useState({
-        email: "whoisnegi07@gmail.com",
-        password: "1234567",
+        email: "",
+        password: "",
         showPassword: false,
     });
 
@@ -77,7 +76,7 @@ const Signin = ({ setUser, error, user, removeLoginError, isAuth }) => {
 
         if ("password" in values)
             temp.password =
-                password.length > 5 ? "" : "Minimum 6 characters are required.";
+                password.length > 5 ? "" : "Minimum 7 characters are required.";
 
         setErrors({ ...temp });
 
@@ -85,8 +84,8 @@ const Signin = ({ setUser, error, user, removeLoginError, isAuth }) => {
     };
 
     // Button Submit Event
-    const handleSubmit = async (event) => {
-        event.preventDefault();
+    const handleSubmit = async (e) => {
+        e.preventDefault();
         setValues({ ...values });
         setOpen(true);
         await setUser({ email, password });
@@ -102,7 +101,7 @@ const Signin = ({ setUser, error, user, removeLoginError, isAuth }) => {
         <Paper className={classes.form} elevation={3}>
             {/* <Loader open={open}/> */}
             <h1 className="logo">PicHub</h1>
-            <form autoComplete="off">
+            <form autoComplete="off" onSubmit={handleSubmit}>
                 <MuiInput
                     label="Email Address"
                     name="email"
@@ -145,7 +144,7 @@ const Signin = ({ setUser, error, user, removeLoginError, isAuth }) => {
                         color="primary"
                         fullWidth
                         className={classes.mb}
-                        onClick={handleSubmit}
+                        type="submit"
                     >
                         Log In
                     </Button>
@@ -173,15 +172,6 @@ const Signin = ({ setUser, error, user, removeLoginError, isAuth }) => {
                     minHeight: "90vh",
                 }}
             >
-                <Grid item xs={12} md={6}>
-                    {loginForm()}
-                    <Paper className={classes.formBottom} variant="outlined">
-                        Don't have an account?{" "}
-                        <Link className="link" to="/signup">
-                            Sign Up
-                        </Link>
-                    </Paper>
-                </Grid>
                 <Grid
                     item
                     xs={12}
@@ -192,10 +182,19 @@ const Signin = ({ setUser, error, user, removeLoginError, isAuth }) => {
                     }}
                 >
                     <img
-                        src={LoginImage}
+                        src="https://res.cloudinary.com/dnja3kt1q/image/upload/v1602294502/logo/login_inx93e.png"
                         alt="loginsvg"
                         className="thumbImage"
                     />
+                </Grid>
+                <Grid item xs={12} md={6}>
+                    {loginForm()}
+                    <Paper className={classes.formBottom} variant="outlined">
+                        Don't have an account?{" "}
+                        <Link className="link" to="/signup">
+                            Sign Up
+                        </Link>
+                    </Paper>
                 </Grid>
             </Grid>
         </Fragment>

@@ -1,4 +1,4 @@
-import React, { Fragment, useState } from "react";
+import React, { useState } from "react";
 import {
   makeStyles,
   Grid,
@@ -7,7 +7,7 @@ import {
 } from "@material-ui/core";
 import ChatIcon from "@material-ui/icons/Chat";
 import { connect } from "react-redux";
-import { addComment } from "../redux/actions/postActions";
+import { addUserComment } from "../redux/actions/postActions";
 
 const useStyles = makeStyles((theme) => ({
   margin: {
@@ -15,13 +15,19 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const CommentForm = ({ postId, addComment }) => {
+const CommentForm = ({ postId, addUserComment }) => {
   const classes = useStyles();
   const [comment, setComment] = useState("");
 
   return (
-    <Fragment>
-      <div className={classes.margin}>
+    <div className={classes.margin}>
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          addUserComment(postId, { comment });
+          setComment("");
+        }}
+      >
         <Grid container spacing={1} alignItems="flex-end">
           <Grid item sm={1}>
             <ChatIcon />
@@ -35,23 +41,23 @@ const CommentForm = ({ postId, addComment }) => {
               onChange={(e) => setComment(e.target.value)}
             />
           </Grid>
-          <Grid item sm={1}></Grid>
+
           <Grid item sm={2}>
             <Button
               variant="outlined"
-              onClick={(e) => {
-                e.preventDefault();
-                addComment(postId, { comment });
-                setComment("");
-              }}
+              style={{ marginBottom: "10px" }}
+              type="submit"
             >
               Post
             </Button>
           </Grid>
+          <Grid item sm={1}></Grid>
         </Grid>
-      </div>
-    </Fragment>
+      </form>
+    </div>
   );
 };
 
-export default connect(null, { addComment })(CommentForm);
+export default connect(null, { addUserComment })(
+  CommentForm
+);

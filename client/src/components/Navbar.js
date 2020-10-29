@@ -13,8 +13,7 @@ import { Link } from "react-router-dom";
 import { setUserSignout } from "../redux/actions/authActions";
 import { connect } from "react-redux";
 import HomeIcon from "@material-ui/icons/Home";
-import PublicIcon from '@material-ui/icons/Public';
-
+import PublicIcon from "@material-ui/icons/Public";
 
 const useStyles = makeStyles(() => ({
     root: {
@@ -32,14 +31,7 @@ const Navbar = (props) => {
 
     return (
         <div className={classes.root}>
-            <AppBar
-                position="fixed"
-                color="inherit"
-                className="navContainer"
-                style={{
-                    boxShadow: "none",
-                }}
-            >
+            <AppBar position="fixed" color="inherit" className="navContainer">
                 <Toolbar>
                     <Typography variant="h4" className="navTitle">
                         <Link className="navTitle underline" to="/">
@@ -75,13 +67,11 @@ const Navbar = (props) => {
                             </Link>
                             <Link to="/" className="underline">
                                 <Button
-                                    variant="contained"
+                                    variant="outlined"
                                     onClick={handleClick}
-                                    style={{
-                                        backgroundColor: "#212121",
-                                    }}
+                                    color="primary"
                                 >
-                                    <Typography variant="button" style={{color: "#fff"}}>Signout</Typography>
+                                    Signout
                                 </Button>
                             </Link>
                         </Fragment>
@@ -95,9 +85,6 @@ const Navbar = (props) => {
                             </Button>
                             <Button component={Link} to="/signup">
                                 SignUp
-                            </Button>
-                            <Button component={Link} to="/about">
-                                About
                             </Button>
                         </Fragment>
                     )}

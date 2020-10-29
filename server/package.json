@@ -1,0 +1,53 @@
+{
+  "name": "pichub",
+  "version": "1.0.0",
+  "description": "One destination for photographers",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "npm run build && node ./dist/index.js",
+    "build": "npm run clean && npm run babel-build",
+    "babel-build": "babel -d ./dist ./src -s --copy-files",
+    "clean": "rimraf ./dist && mkdir dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/attainu/project-bhavleen-singh-au7.git"
+  },
+  "author": "Karan Negi / Bhavleen Singh",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/attainu/project-bhavleen-singh-au7/issues"
+  },
+  "homepage": "https://github.com/attainu/project-bhavleen-singh-au7#readme",
+  "dependencies": {
+    "@babel/cli": "^7.11.6",
+    "@babel/core": "^7.11.6",
+    "@babel/node": "^7.10.5",
+    "@babel/plugin-transform-runtime": "^7.11.5",
+    "@babel/preset-env": "^7.11.5",
+    "bcrypt": "^5.0.0",
+    "cloudinary": "^1.23.0",
+    "config": "^3.3.2",
+    "cors": "^2.8.5",
+    "datauri": "^3.0.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "express-jwt": "^6.0.0",
+    "express-validator": "^6.6.1",
+    "jsonwebtoken": "^8.5.1",
+    "lodash": "^4.17.20",
+    "mongoose": "^5.10.6",
+    "morgan": "^1.10.0",
+    "multer": "^1.4.2",
+    "node-fetch": "^2.6.1",
+    "nodemailer": "^6.4.11",
+    "request": "^2.88.2",
+    "rimraf": "^3.0.2",
+    "sharp": "^0.26.1",
+    "validator": "^13.1.17"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.4"
+  },
+  "keywords": []
+}
